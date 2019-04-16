@@ -15,9 +15,6 @@ _colors[yellow]='[0;33m'
 _colors[default]='[0m'
 _colors[restore]='[0m'
 
-# catch local ruby bins
-export PATH="${PATH}:$(find ~/.gem/ruby/ -maxdepth 2 -type d -name bin)"
-
 # get files, that are staged for commit
 _puppet_git_hooks_git_init () {
   # change pwd to toplevel, to match dot files
