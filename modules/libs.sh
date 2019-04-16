@@ -30,6 +30,35 @@ _puppet_git_hooks_git_init () {
   _files=$(git diff --cached --name-only --diff-filter=ACM "${revision}")
 }
 
+_puppet_git_hooks_say () {
+  local _say_state="$1"
+  local _say_checkname="$2"
+
+  case "$_say_state" in
+    "checking")
+      printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" ' '
+      printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" '==================================================='
+      printf "\e${_colors[lightblue]}checking\e${_colors[restore]} %-${_columwidth}s" "${_say_checkname}"
+      ;;
+    "OK")
+      printf "\r\e${_colors[green]} OK \e${_colors[restore]}%-${_columwidth}s\n" "${_say_checkname}"
+      ;;
+    "nOK")
+      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" ' '
+      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" '==================================================='
+      printf "\r\e${_colors[yellow]}nOK \e${_colors[restore]}%-${_columwidth}s\n" "${_say_checkname}"
+      _rc=1
+      ;;
+    "FAILED")
+      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" ' '
+      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" '==================================================='
+      printf "\r\e${_colors[red]}FAILED \e${_colors[restore]}%-${_columwidth}s\n" "${_say_checkname}"
+      _rc=1
+      ;;
+  esac
+
+}
+
 # checks 
 _puppet_git_hooks_check () {
   local filenameregex=$1
@@ -39,27 +68,20 @@ _puppet_git_hooks_check () {
   local allfiles=$@
   local filteredfiles=
 
-  if filteredfiles=$(echo $allfiles | tr ' ' '\n' | grep -E $filenameregex); then
-    printf "\e${_colors[lightblue]}checking\e${_colors[restore]} %-${_columwidth}s" "${checkcommand}"
+  if filteredfiles=$(echo $allfiles | tr ' ' '\n' | grep -E "$filenameregex"); then
+    _puppet_git_hooks_say "checking" "${checkcommand}"
 
     local _base_command=$(awk '{print $1;}' <<< $checkcommand)
     if type $_base_command > /dev/null 2>&1; then
         if ${checkcommand} ${filteredfiles} > /dev/null 2>&1; then
-          printf "\r\e${_colors[green]} OK \e${_colors[restore]}%-${_columwidth}s\n" "${checkcommand}"
+          _puppet_git_hooks_say "OK" "${checkcommand}"
         else
-          printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" ' '
-          printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" '==================================================='
-          printf "\r\e${_colors[yellow]}nOK \e${_colors[restore]}%-${_columwidth}s\n" "${checkcommand}"
-          _rc=1
+          _puppet_git_hooks_say "nOK" "${checkcommand}"
           ${checkcommand} ${filteredfiles}
-          echo
         fi
     else
-      printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" ' '
-      printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" '==================================================='
-      printf "\r\e${_colors[yellow]}nOK \e${_colors[restore]}%-${_columwidth}s\n" "${checkcommand} ${filteredfiles}"
-      printf "\e${_colors[red]}%s\e${_colors[restore]}\n" "FAILED: ${_base_command} not installed"
-      _rc=1
+      _puppet_git_hooks_say "FAILED" "${checkcommand}"
+      echo "command not found: ${_base_command}"
     fi
   fi
 }
