@@ -23,7 +23,7 @@ Just follow your current workflow. The pre-commit hook will only check those fil
 I recommend using dot files in the puppet repo root (e.g. [`.puppet-lint.rc`](https://github.com/rodjek/puppet-lint#configuration-file), [`.yamllint`](https://yamllint.readthedocs.io/en/stable/rules.html)), instead of changing the check invocation.
 
 ## Extending pre-commit
-Try using the function `_puppet_git_hooks_check` in `pre-commit`. In case the check invocation is complex, just define your own function in a new file beneath `modules/` and call the function in pre-commit. All files matching `*.sh` in `modules/` will be sourced.
+Try using the function `_puppet_git_hooks_check` in `pre-commit`. In case the check invocation is complex, just define your own function in a new file beneath `modules/` and call the function in pre-commit. You may want to use the `_puppet_git_hooks_say` method for colored output, see also `modules/libs.sh`. All files matching `*.sh` in `modules/` gonna be sourced.
 
 ## References
 I used ideas from https://github.com/gini/puppet-git-hooks and https://github.com/drwahl/puppet-git-hooks
