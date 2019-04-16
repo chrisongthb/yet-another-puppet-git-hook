@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# get functions and checks
+if [ -L $0 ]; then # $0 is symlink
+  source $(find $(dirname $(readlink $0))/modules/ -type f )
+else
+  source $(find $(dirname $0)/modules/ -type f )
+fi
+
+# collect changed files
+_puppet_git_hooks_git_init
+
+# do checks
+#_puppet_git_hooks_check '\.erb$' 'bash -c "erb -x -T - $@ | ruby -c"' ${_files} # not working
+_puppet_git_hooks_check '\.pp$' 'puppet-lint' ${_files}
+_puppet_git_hooks_check '\.pp$' 'puppet parser validate' ${_files}
+_puppet_git_hooks_check '\.epp$' 'puppet epp validate' ${_files}
+_puppet_git_hooks_check '\.yaml$' 'yamllint --strict' ${_files}
+_puppet_git_hooks_check '^Puppetfile$' 'r10k puppetfile check' ${_files}
+
+# exit
+if [ $_rc -eq 0 ]; then
+  echo
+  exit 0
+else
+  echo
+  echo
+  echo 'git commit aborted.'
+  exit $_rc
+fi
