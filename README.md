@@ -10,6 +10,8 @@ The hook requires the following software:
 * https://github.com/rodjek/puppet-lint
 * puppet binary
 
+Please check, that your PATH is valid (all commands are executable), e.g. add things like `export PATH="${PATH}:$(find ~/.gem/ruby/ -maxdepth 2 -type d -name bin)"` to your .bashrc
+
 ### Configure pre-commit hook
 * clone this repo
 * navigate to your puppet repo
