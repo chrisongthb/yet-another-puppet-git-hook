@@ -2,9 +2,13 @@
 
 # get functions and checks
 if [ -L $0 ]; then # $0 is symlink
-  source $(find $(dirname $(readlink $0))/modules/ -type f )
+  for i in $(find $(dirname $(readlink $0))/modules/ -type f -name '*.sh' ); do
+    source $i
+  done
 else
-  source $(find $(dirname $0)/modules/ -type f )
+  for i in $(find $(dirname $0)/modules/ -type f -name '*.sh' ); do
+    source $i
+  done
 fi
 
 # collect changed files
