@@ -1,7 +1,7 @@
 #!/bin/bash
 
 _puppet_git_hooks_check_trailing_whitespaces () {
-  local filteredfiles="$1"
+  local filteredfiles="$@"
   local say_checkname='trailing whitespaces'
 
   _puppet_git_hooks_say "checking" "$say_checkname"
