@@ -44,14 +44,10 @@ _puppet_git_hooks_say () {
       printf "\r\e${_colors[green]} OK \e${_colors[restore]}%-${_columwidth}s\n" "${_say_checkname}"
       ;;
     "nOK")
-      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" ' '
-      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" '==================================================='
       printf "\r\e${_colors[yellow]}nOK \e${_colors[restore]}%-${_columwidth}s\n" "${_say_checkname}"
       _rc=1
       ;;
     "FAILED")
-      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" ' '
-      #printf "\r\e${_colors[default]}%-${_columwidth}s\e${_colors[restore]}\n" '==================================================='
       printf "\r\e${_colors[red]}FAILED \e${_colors[restore]}%-${_columwidth}s\n" "${_say_checkname}"
       _rc=1
       ;;
