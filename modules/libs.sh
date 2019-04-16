@@ -27,7 +27,7 @@ _puppet_git_hooks_git_init () {
       # Initial commit: diff against an empty tree object
       revision=4b825dc642cb6eb9a060e54bf8d69288fbee4904
   fi
-  _files=$(git diff --cached --name-only --diff-filter=ACM "${revision}")
+  _files=$(git diff --cached --name-only --diff-filter=ACM "${revision}" | tr '\n' ' ')
 }
 
 _puppet_git_hooks_say () {
