@@ -17,6 +17,7 @@ Please check, that your PATH is valid (all commands are executable), e.g. add th
 * navigate to your puppet repo
 * `cd .git/hooks/`
 * `ln -s <path-to-this-repo>/pre-commit`
+* `chmod +x pre-commit`
 
 ## Usage
 Just follow your current workflow. The pre-commit hook will only check those files, that are staged for this commit (not the whole repo). 
