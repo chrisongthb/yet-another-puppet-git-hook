@@ -11,7 +11,7 @@ _puppet_git_hooks_check_trailing_whitespaces () {
     else
       _puppet_git_hooks_say "nOK" "$say_checkname"
       echo "Found trailing whitespaces in:"
-      grep -El ' $' ${filteredfiles}
+      grep --color=auto -HnoE ' $' ${filteredfiles}
     fi
   else
     _puppet_git_hooks_say "FAILED" "$say_checkname"
