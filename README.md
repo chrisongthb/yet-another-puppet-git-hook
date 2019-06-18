@@ -86,7 +86,8 @@ if [ "$3" == "1" ]; then
   echo "Configuring pre-commit hook..."
   if [ -d ~/.yet-another-puppet-git-hook/.git/ ]; then
     cd ~/.yet-another-puppet-git-hook
-    git pull
+    git fetch --all --quiet
+    git reset --hard --quiet origin/master
     cd $OLDPWD
   else
     rm -rf ~/.yet-another-puppet-git-hook/
