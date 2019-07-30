@@ -50,10 +50,10 @@ class profile::git_pre_commit_hook {
   # provide required packages
   ensure_packages( 'yamllint', {'ensure' => 'present'})
   if $gem_proxy {
-    ensure_packages( ['r10k', 'puppet-lint'], {'ensure' => 'present', provider => 'gem', install_options => { '--http-proxy' => $gem_proxy}})
+    ensure_packages( ['r10k', 'puppet-lint'], {'ensure' => 'latest', provider => 'gem', install_options => { '--http-proxy' => $gem_proxy}})
   }
   else {
-    ensure_packages( ['r10k', 'puppet-lint'], {'ensure' => 'present', provider => 'gem' })
+    ensure_packages( ['r10k', 'puppet-lint'], {'ensure' => 'latest', provider => 'gem' })
   }
 
   # Rollout post-checkout in git-init(1) template,
