@@ -4,7 +4,7 @@ _puppet_git_hooks_check_trailing_whitespaces () {
   local filteredfiles=
   local say_checkname='trailing whitespaces'
 
-  if filteredfiles=$(echo $@ | tr ' ' '\n' | grep -v "README.md"); then
+  if filteredfiles=$(echo $@ | tr ' ' '\n' | grep -vE 'README.md|^files\/'); then
     _puppet_git_hooks_say "checking" "$say_checkname"
     if type grep > /dev/null 2>&1; then
       if ! grep -qIE ' $' ${filteredfiles}; then
