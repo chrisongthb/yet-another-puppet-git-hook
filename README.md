@@ -28,6 +28,8 @@ The hook requires the following software:
 * https://github.com/puppetlabs/r10k/
 * https://github.com/rodjek/puppet-lint
 * puppet binary
+* https://github.com/mmckinst/puppet-lint-legacy_facts-check
+* https://github.com/relud/puppet-lint-strict_indent-check
 
 Please check, that your PATH is valid (all commands are executable), e.g. add things like `export PATH="${PATH}:$(find ~/.gem/ruby/ -maxdepth 2 -type d -name bin)"` to your .bashrc
 
@@ -50,10 +52,31 @@ class profile::git_pre_commit_hook {
   # provide required packages
   ensure_packages( 'yamllint', {'ensure' => 'present'})
   if $gem_proxy {
-    ensure_packages( ['r10k', 'puppet-lint'], {'ensure' => 'latest', provider => 'gem', install_options => { '--http-proxy' => $gem_proxy}})
+    ensure_packages(
+      [
+        'r10k',
+        'puppet-lint',
+        'puppet-lint-legacy_facts-check',
+        'puppet-lint-strict_indent-check',
+      ], {
+        ensure   => 'installed',
+        provider => 'gem',
+        install_options => { '--http-proxy' => $gem_proxy }
+      }
+    )
   }
   else {
-    ensure_packages( ['r10k', 'puppet-lint'], {'ensure' => 'latest', provider => 'gem' })
+    ensure_packages(
+      [
+        'r10k',
+        'puppet-lint',
+        'puppet-lint-legacy_facts-check',
+        'puppet-lint-strict_indent-check',
+      ], {
+        ensure   => 'installed',
+        provider => 'gem'
+      }
+    )
   }
 
   # Rollout post-checkout in git-init(1) template,
