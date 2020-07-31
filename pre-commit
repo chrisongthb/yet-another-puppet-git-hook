@@ -17,8 +17,8 @@ _puppet_git_hooks_git_init
 # do checks
 #_puppet_git_hooks_check '\.erb$' 'bash -c "erb -x -T - $@ | ruby -c"' ${_files} # not working
 _puppet_git_hooks_check '\.pp$' 'puppet-lint --relative' ${_files}
-_puppet_git_hooks_check '\.pp$' 'puppet parser validate' ${_files}
-_puppet_git_hooks_check '\.epp$' 'puppet epp validate' ${_files}
+_puppet_git_hooks_check '\.pp$' '/opt/puppetlabs/bin/puppet parser validate' ${_files}
+_puppet_git_hooks_check '\.epp$' '/opt/puppetlabs/bin/puppet epp validate' ${_files}
 _puppet_git_hooks_check '\.yaml$' 'yamllint --strict' ${_files}
 _puppet_git_hooks_check '^Puppetfile$' 'r10k puppetfile check' ${_files}
 _puppet_git_hooks_check_trailing_whitespaces ${_files}
