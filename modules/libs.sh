@@ -27,7 +27,15 @@ _puppet_git_hooks_git_init () {
       # Initial commit: diff against an empty tree object
       revision=4b825dc642cb6eb9a060e54bf8d69288fbee4904
   fi
-  _files=$(git diff --cached --name-only --diff-filter=ACM "${revision}" | tr '\n' ' ')
+  # Fill list of files to test and check if there are
+  # unstaged changes in any of these files. See also git-diff(1)
+  _files=$(git diff --staged --name-only --diff-filter=ACM "${revision}" | tr '\n' ' ') # prints staged files
+  for i in $(git diff --name-only --diff-filter=ACM); do                                # prints unstaged files
+    if grep -q "${i}" <<< "${_files}"; then
+      printf "\n\e${_colors[red]}The file '${i}' has unstaged changes. Abort.\e${_colors[restore]}\n\n"
+      exit 1
+    fi
+  done
 }
 
 _puppet_git_hooks_say () {
