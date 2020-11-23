@@ -9,8 +9,8 @@
 * 3. [Usage](#Usage)
 * 4. [Extending pre-commit](#Extendingpre-commit)
 * 5. [References](#References)
-	* 5.1. [ToDos](#ToDos)
-* 6. [Support](#Support)
+* 6. [Limitations](#Limitations)
+* 7. [Support](#Support)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -135,9 +135,10 @@ Try using the function `_puppet_git_hooks_check` in `pre-commit`. In case the ch
 ##  5. <a name='References'></a>References
 I used ideas from https://github.com/gini/puppet-git-hooks and https://github.com/drwahl/puppet-git-hooks
 
-###  5.1. <a name='ToDos'></a>ToDos
-* implement erb template check
+##  6. <a name='Limitations'></a>Limitations
+* Does not check erb templates
+* Does not support whitespaces in filenames
 
-##  6. <a name='Support'></a>Support
+##  7. <a name='Support'></a>Support
 Please create bug reports and feature requests in [GitHub issues](https://github.com/chrisongthb/yet-another-puppet-git-hook/issues).
 
