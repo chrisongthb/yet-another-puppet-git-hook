@@ -138,6 +138,7 @@ I used ideas from https://github.com/gini/puppet-git-hooks and https://github.co
 ##  6. <a name='Limitations'></a>Limitations
 * Does not check erb templates
 * Does not support whitespaces in filenames
+* This is tested on Ubuntu 16.04 and 18.04
 
 ##  7. <a name='Support'></a>Support
 Please create bug reports and feature requests in [GitHub issues](https://github.com/chrisongthb/yet-another-puppet-git-hook/issues).
