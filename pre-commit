@@ -1,14 +1,16 @@
 #!/bin/bash
+# shellcheck disable=SC2154
+# shellcheck disable=SC1090
 
 # get functions and checks
-if [ -L $0 ]; then # $0 is symlink
-  for i in $(find $(dirname $(readlink $0))/modules/ -type f -name '*.sh' ); do
-    source $i
-  done
+if [ -L "$0" ]; then # $0 is symlink
+  while read -r line; do
+    source "$line"
+  done < <(find "$(dirname "$(readlink "$0")")/modules/" -type f -name '*.sh')
 else
-  for i in $(find $(dirname $0)/modules/ -type f -name '*.sh' ); do
-    source $i
-  done
+  while read -r line; do
+    source "$line"
+  done < <(find "$(dirname "$0")/modules/" -type f -name '*.sh')
 fi
 
 # collect changed files
@@ -16,20 +18,21 @@ _puppet_git_hooks_git_init
 
 # do checks
 #_puppet_git_hooks_check '\.erb$' 'bash -c "erb -x -T - $@ | ruby -c"' ${_files} # not working
-_puppet_git_hooks_check '\.pp$' 'puppet-lint --relative' ${_files}
-_puppet_git_hooks_check '\.pp$' '/opt/puppetlabs/bin/puppet parser validate' ${_files}
-_puppet_git_hooks_check '\.epp$' '/opt/puppetlabs/bin/puppet epp validate' ${_files}
-_puppet_git_hooks_check '\.yaml$' 'yamllint --strict' ${_files}
-_puppet_git_hooks_check '^Puppetfile$' 'r10k puppetfile check' ${_files}
-_puppet_git_hooks_check_trailing_whitespaces ${_files}
+_puppet_git_hooks_check_yaml_in_data 'data'
+_puppet_git_hooks_check '\.pp$' 'puppet-lint --relative'
+_puppet_git_hooks_check '\.pp$' '/opt/puppetlabs/bin/puppet parser validate'
+_puppet_git_hooks_check '\.epp$' '/opt/puppetlabs/bin/puppet epp validate'
+_puppet_git_hooks_check '\.yaml$' 'yamllint --strict'
+_puppet_git_hooks_check '^Puppetfile$' 'r10k puppetfile check'
+_puppet_git_hooks_check_trailing_whitespaces
 
 # exit
-if [ $_rc -eq 0 ]; then
+if [ "$_rc" -eq '0' ]; then
   echo
   exit 0
 else
   echo
   echo
   echo 'git commit aborted.'
-  exit $_rc
+  exit "$_rc"
 fi
