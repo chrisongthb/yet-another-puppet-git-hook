@@ -1,22 +1,25 @@
 #!/bin/bash
+# shellcheck disable=SC2154
 
 _puppet_git_hooks_check_trailing_whitespaces () {
-  local filteredfiles=
   local say_checkname='trailing whitespaces'
 
-  if filteredfiles=$(echo $@ | tr ' ' '\n' | grep -vE '\.md$|^files\/'); then
-    _puppet_git_hooks_say "checking" "$say_checkname"
-    if type grep > /dev/null 2>&1; then
-      if ! grep -qIE ' $' ${filteredfiles}; then
-        _puppet_git_hooks_say "OK" "$say_checkname"
-      else
-        _puppet_git_hooks_say "nOK" "$say_checkname"
-        echo "Found trailing whitespaces in:"
-        grep --color=auto -HnoE ' $' ${filteredfiles}
+  if grep -qvE '\.md$|^files\/' "$tmp_file"; then
+    _puppet_git_hooks_say 'checking' "$say_checkname"
+
+    files_with_trailing_whitespaces=()
+    while read -r line; do
+      if grep -qIE ' $' <<< "$line"; then
+        files_with_trailing_whitespaces+=("$line")
       fi
+    done < "$tmp_file"
+
+    if [[ "${#files_with_trailing_whitespaces[@]}" -eq 0 ]]; then
+        _puppet_git_hooks_say 'OK' "$say_checkname"
     else
-      _puppet_git_hooks_say "FAILED" "$say_checkname"
-      echo "command not found: grep"
+        _puppet_git_hooks_say 'nOK' "$say_checkname"
+        echo "Found trailing whitespaces in:"
+        echo "${files_with_trailing_whitespaces[@]}"
     fi
   fi
 }
