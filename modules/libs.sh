@@ -3,7 +3,6 @@
 # declare variables
 _columwidth='60'
 _rc=0
-_files=
 
 # declare bash colors
 declare -A _colors
@@ -14,6 +13,13 @@ _colors[lightblue]='[0;94m'
 _colors[yellow]='[0;33m'
 _colors[default]='[0m'
 _colors[restore]='[0m'
+
+# manage tmp file
+tmp_file="$(mktemp)"
+trap 'rm -f ${tmp_file}' EXIT
+
+# errorhandling
+set -euo pipefail
 
 # get files, that are staged for commit
 _puppet_git_hooks_git_init () {
@@ -29,12 +35,14 @@ _puppet_git_hooks_git_init () {
   fi
   # Fill list of files to test and check if there are
   # unstaged changes in any of these files. See also git-diff(1)
-  _files=$(git diff --staged --name-only --diff-filter=ACM "${revision}" | tr '\n' ' ') # prints staged files
+  git diff --staged --name-only --diff-filter=ACM "${revision}" > "$tmp_file" # prints staged files
   for i in $(git diff --name-only --diff-filter=ACM); do                                # prints unstaged files
-    if grep -q "${i}" <<< "${_files}"; then
-      printf "\n\e${_colors[red]}The file '${i}' has unstaged changes. Abort.\e${_colors[restore]}\n\n"
-      exit 1
-    fi
+    while read -r line; do
+      if grep -q "${i}" <<< "${line}"; then
+        echo -e "\n\e${_colors[red]}The file '${i}' has unstaged changes. Abort.\e${_colors[restore]}\n\n"
+        exit 1
+      fi
+    done < "$tmp_file"
   done
 }
 
@@ -69,19 +77,21 @@ _puppet_git_hooks_check () {
   shift
   local checkcommand=$1
   shift
-  local allfiles=$@
   local filteredfiles=
 
-  if filteredfiles=$(echo $allfiles | tr ' ' '\n' | grep -E "$filenameregex"); then
+  if filteredfiles=$(grep -E "$filenameregex" "$tmp_file"); then
     _puppet_git_hooks_say "checking" "${checkcommand}"
 
-    local _base_command=$(awk '{print $1;}' <<< $checkcommand)
-    if type $_base_command > /dev/null 2>&1; then
+    local _base_command=
+    _base_command="$(awk '{print $1;}' <<< "$checkcommand")"
+    if type "$_base_command" > /dev/null 2>&1; then
+        # shellcheck disable=SC2086
         if ${checkcommand} ${filteredfiles} > /dev/null 2>&1; then
           _puppet_git_hooks_say "OK" "${checkcommand}"
         else
           _puppet_git_hooks_say "nOK" "${checkcommand}"
-          ${checkcommand} ${filteredfiles}
+        # shellcheck disable=SC2086
+          ${checkcommand} ${filteredfiles} || true
         fi
     else
       _puppet_git_hooks_say "FAILED" "${checkcommand}"
